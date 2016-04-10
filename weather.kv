@@ -1,0 +1,191 @@
+#:import C kivy.utils.get_color_from_hex
+#:import Formatter string.Formatter
+#:import r main.root
+#:import mobile_platform main.mobile_platform
+
+
+<Button>:
+    background_normal: 'assets\\button_normal.png'
+    background_down: 'assets\\button_down.png'
+    markup: True
+    halign: 'center'
+    valign: 'middle'
+    size_hint: (1, 1)
+
+<LargeButton>:
+    text_size: self.size
+    shorten_from: 'right'
+    split_str: ' '
+
+<LocationButton>
+    text: Formatter().format('[font=symbols][size=90]{}[/size][/font]\n {}, {}', self.current_weather.symbol, self.location.town, self.location.country)
+    font_size: '18sp'
+
+<LargeGrid@GridLayout>:
+    cols: 2
+    spacing: 10
+    row_default_height: (0.5 * (self.width - self.spacing[0]) - self.padding[0])
+    row_force_default: True
+    size_hint_y: None
+
+
+<RectangleButton>:
+    padding: (15, 15)
+
+<SearchRectangleButton>:
+    text: Formatter().format('{} {}',self.location.town, self.location.country)
+    font_size: 40 if mobile_platform else 20
+
+<RectangleGrid@GridLayout>:
+    cols: 1
+    row_default_height: 90
+    row_force_default: True
+    size_hint_y: None
+    padding: 20,20
+    spacing: 10
+
+<DeleteDialog>:
+    id: dialog_base
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            id: dialog_base_title
+            halign: 'center'
+            size_hint_y: 0.5
+            markup: True
+            font_size: 60 if mobile_platform else 30
+        LargeGrid:
+            size_hint_y: 0.5
+            LargeButton:
+                text: 'Yes'
+                font_size: 60 if mobile_platform else 30
+                background_color: C('2ECC71')
+                on_release: dialog_base.on_yes_press()
+            LargeButton:
+                text: 'No'
+                font_size: 60 if mobile_platform else 30
+                background_color: C('FF3B30')
+                on_release: dialog_base.on_no_press()
+
+<AddLocationForm>
+    name: 'addform'
+    id: addform
+    GridLayout:
+        cols: 1
+        GridLayout:
+            size_hint: 1, 0.15
+            cols: 3
+            padding: 15
+            LargeButton:
+                text: '<'
+                size_hint: 0.1, 0.1
+                on_release:
+                    addform.reset_and_back()
+
+                background_color: C('#FF3B30')
+                font_size: 60 if mobile_platform else 30
+            TextInput:
+                id: input
+                size_hint: 0.5, 0.1
+                multiline: False
+                font_size: 100 if mobile_platform else 40
+                padding_top: 10
+                padding_bottom: 10
+                on_text_validate: addform.on_search()
+            LargeButton:
+                id: search_button
+                size_hint: 0.25, 0.1
+                text: 'Search'
+                text_color: C('#FFFFFF')
+                font_size: 60 if mobile_platform else 30
+                background_color: C('#FF0000')
+                on_release: addform.on_search()
+
+        ScrollView:
+            RectangleGrid:
+                id: results
+
+<AddLocErrorForm>:
+    id: error_form_bass
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            halign: 'center'
+            size_hint_y: 0.5
+            text: 'Error with search request.\nMust be at least 3 characters'
+            font_size: 56 if mobile_platform else 26
+
+        RectangleGrid:
+            size_hint_y: 0.5
+            LargeButton:
+                text: 'Dismiss'
+                font_size: 60 if mobile_platform else 30
+                background_color: C('2ECC71')
+                on_release: error_form_bass.dismiss()
+
+<SimpleWeatherScreen>:
+    id: menu_base
+    GridLayout:
+        cols: 1
+        GridLayout
+            size_hint: 1, 0.15
+            cols: 2
+            padding: 15
+            RectangleButton:
+                text: '<'
+                size_hint: 0.1, 0.1
+                on_release: menu_base.refresh_and_change_screen()
+                background_color: C('#FF3B30')
+                font_size: 60 if mobile_platform else 30
+            Label:
+                id: simple_menu_title
+                background_color: C('#FF3B30')
+                font_size: 80 if mobile_platform else 40
+                bold: True
+        ScrollView:
+            do_scroll_x: False
+            pos_hint: {'center_x':.5, 'center_y':.5}
+            RectangleGrid:
+                id: SimpleWeatherScroll
+
+<DetailedWeatherScreen>:
+    id: detailed_menu_base
+    GridLayout:
+        cols: 1
+        GridLayout
+            size_hint: 1, 0.15
+            cols: 2
+            padding: 15
+            RectangleButton:
+                id: detailed_return_button
+                text: '<'
+                size_hint: 0.1, 0.1
+                background_color: C('#FF3B30')
+                font_size: 60 if mobile_platform else 30
+            Label:
+                id: detailed_menu_title
+                background_color: C('#FF3B30')
+                font_size: 80 if mobile_platform else 40
+                bold: True
+        GridLayout:
+            cols: 1
+            Label:  # Symbol
+                id: detailed_menu_symbol
+                markup: True
+                size_hint: (1, 0.1)
+                font_size: 100
+            Label:
+                id: detailed_menu_text
+                halign: 'center'
+                font_size: 30
+                size_hint: (1, 0.8)
+				markup: True
+
+<MenuScreen>:
+    name: 'menu'
+    ScrollView:
+        do_scroll_x: False
+        pos_hint: {'center_x':.5, 'center_y':.5}
+        LargeGrid:
+            padding: 15
+            id: location_grid
