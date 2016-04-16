@@ -18,7 +18,7 @@
     split_str: ' '
 
 <LocationButton>
-    text: Formatter().format('[font=symbols][size=90]{}[/size][/font]\n {}, {}', self.current_weather.symbol, self.location.town, self.location.country)
+    text: Formatter().format('[font=symbols][size=90]{symbol}[/size][/font]\n {town}, {country}', symbol=self.current_weather.symbol, town=self.location.town, country=self.location.country)
     font_size: '18sp'
 
 <LargeGrid@GridLayout>:
@@ -33,7 +33,7 @@
     padding: (15, 15)
 
 <SearchRectangleButton>:
-    text: Formatter().format('{} {}',self.location.town, self.location.country)
+    text: Formatter().format('{town} {country}',town=self.location.town, country=self.location.country)
     font_size: 40 if mobile_platform else 20
 
 <RectangleGrid@GridLayout>:
