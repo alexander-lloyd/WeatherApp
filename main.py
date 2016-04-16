@@ -91,8 +91,8 @@ class LargeGrid:
 class RectangleButton(ListItemButton):
     iter_number = 0
 
-    def __init__(self, forecast=None):  # I dont think this should have forecast in it
-        super(RectangleButton, self).__init__()
+    def __init__(self, forecast=None, **kwargs):  # I dont think this should have forecast in it
+        super(RectangleButton, self).__init__(**kwargs)
         self.background_color = c(COLOURS[RectangleButton.iter_number % len(COLOURS)])
         RectangleButton.iter_number += 1
         self.forecast = forecast
@@ -123,8 +123,8 @@ class DeleteDialog(Popup):
         super(DeleteDialog, self).__init__(**kwargs)
         self.title = 'Delete Location'
         self.location = location
-        self.ids.get('dialog_base_title').text = Formatter().format('Are you sure you\nwant to delete\n{}?',
-                                                                    self.location.town)
+        self.ids.get('dialog_base_title').text = Formatter().format('Are you sure you\nwant to delete\n{location}?',
+                                                                    location=self.location.town)
         self.separator_color = (0, 0, 0, 0)
         self.title_align = 'center'
         self.title_size = 60 if mobile_platform else 30
@@ -245,20 +245,20 @@ class DetailedWeatherScreen(Screen):
         self.forecast = forecast
         day_time = datetime.fromtimestamp(forecast.time)
         detailed_menu_title = self.ids.get('detailed_menu_title')
-        detailed_menu_title.text = Formatter().format('{} {}:00', self.location.town, (day_time.hour + self.location.timezone) % 24)
+        detailed_menu_title.text = Formatter().format('{town} {hour}:00', town=self.location.town, hour=(day_time.hour + self.location.timezone) % 24)
         self.ids.get('detailed_return_button').bind(on_release=self.return_to_simple_screen)
         detailed_menu_symbol = self.ids.get('detailed_menu_symbol')
-        detailed_menu_symbol.text = Formatter().format('[font=symbols]{}[/font]', forecast.symbol)
-        text = Formatter().format('[font=symbols]k[/font]Temperature: {}[sup]o[/sup]C\n'
-                                  'Pressure: {} Pa\nHumidity: {} %\n'
-                                  '\nClouds Cover: {} %\nWind Speed: {} m/s\n'
-                                  'Wind Direction: {}[sup]o[/sup]',
-                                  int(self.forecast.temp - 273),
-                                  int(self.forecast.pressure) * 100,  # To convert hPa to Pa
-                                  self.forecast.humidity,
-                                  self.forecast.clouds,
-                                  self.forecast.wind_speed,
-                                  int(self.forecast.wind_direction))
+        detailed_menu_symbol.text = Formatter().format('[font=symbols]{symbol}[/font]', symbol=forecast.symbol)
+        text = Formatter().format('[font=symbols]k[/font]Temperature: {temperature}[sup]o[/sup]C\n'
+                                  'Pressure: {pressure} Pa\nHumidity: {humidity} %\n'
+                                  '\nClouds Cover: {clouds} %\nWind Speed: {clouds} m/s\n'
+                                  'Wind Direction: {direction}[sup]o[/sup]',
+                                  temperature=int(self.forecast.temp - 273),
+                                  pressure=int(self.forecast.pressure) * 100,  # To convert hPa to Pa
+                                  humidity=self.forecast.humidity,
+                                  clouds=self.forecast.clouds,
+                                  wind_speed=self.forecast.wind_speed,
+                                  direction=int(self.forecast.wind_direction))
         self.ids.get('detailed_menu_text').text = text
 
     def return_to_simple_screen(self, widget):

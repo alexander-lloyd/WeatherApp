@@ -4,3 +4,4 @@ __pycache__
 *.db
 *.bat
 keys.txt
+api_keys.py

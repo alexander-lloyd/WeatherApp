@@ -124,7 +124,7 @@ def get_symbol_from_number(num, forecast=None):
         try:
             return weather_icon_lookup[int(num[0])]
         except KeyError:
-            text = Formatter().format('The weather symbol could not be found. Symbol: {}', num)
+            text = Formatter().format('The weather symbol could not be found. Symbol: {num}', num=num)
             Logger.warn(text)
             return 'l'  # N/A
 
@@ -185,7 +185,7 @@ class Forecast:
         self.symbol_number = symbol
 
     def __repr__(self):
-        return Formatter().format('<Forecast {}, {}>', self.location.town, ctime(self.time))
+        return Formatter().format('<Forecast {town}, {time}>', town=self.location.town, time=ctime(self.time))
 
     @classmethod
     def get_current_forecast(cls, location_id):
@@ -222,9 +222,8 @@ class Forecast:
             winddirection = forecast['wind']['deg']
             symbol = forecast['weather'][0]['id']
             command += Formatter().format(
-                "((SELECT forecast_id FROM forecast WHERE location_id={} AND time={}),{},{},{},{},{},{},{},{},{}),",
-                location.id, forecast_time, location.id, forecast_time, temp, pressure, humidity, clouds, windspeed,
-                winddirection, symbol)
+                "((SELECT forecast_id FROM forecast WHERE location_id={location_id} AND time={time}),{location_id},{time},{temp},{presssure},{humidity},{clouds},{windspeed},{winddirection},{symbol}),",
+                location_id = location_id, time=forecast_time, temp=temp, pressure=pressure, humidity=humidity, clouds=clouds, windspeed=windspeed, winddirection=winddirection, symbol=symbol)
         _db.execute(command[:-1])
 
     @property
@@ -247,7 +246,7 @@ class Location:
         self.timezone = timezone
 
     def __repr__(self):
-        return Formatter().format('<Location: {}>', self.town)  # For debugging properties
+        return Formatter().format('<Location: {town}>', town=self.town)  # For debugging properties
 
     @classmethod
     def from_id(cls, location_id):
@@ -255,7 +254,7 @@ class Location:
         try:
             return cls(*next(_db.select(command, (location_id,))))
         except StopIteration:
-            raise IndexError(Formatter().format('location_id {} is not in database', location_id))
+            raise IndexError(Formatter().format('location_id {location_id} is not in database', location_id=location_id))
 
     @classmethod
     def all_locations(cls):
