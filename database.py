@@ -222,8 +222,8 @@ class Forecast:
             winddirection = forecast['wind']['deg']
             symbol = forecast['weather'][0]['id']
             command += Formatter().format(
-                "((SELECT forecast_id FROM forecast WHERE location_id={location_id} AND time={time}),{location_id},{time},{temp},{presssure},{humidity},{clouds},{windspeed},{winddirection},{symbol}),",
-                location_id = location_id, time=forecast_time, temp=temp, pressure=pressure, humidity=humidity, clouds=clouds, windspeed=windspeed, winddirection=winddirection, symbol=symbol)
+                "((SELECT forecast_id FROM forecast WHERE location_id={location_id} AND time={time}),{location_id},{time},{temp},{pressure},{humidity},{clouds},{windspeed},{winddirection},{symbol}),",
+                location_id = location.id, time=forecast_time, temp=temp, pressure=pressure, humidity=humidity, clouds=clouds, windspeed=windspeed, winddirection=winddirection, symbol=symbol)
         _db.execute(command[:-1])
 
     @property
